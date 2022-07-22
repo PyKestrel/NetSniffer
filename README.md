@@ -1,0 +1,2 @@
+# NetSniffer
+ Leverage OSINT APIs Right From Your Chrome Context Menu.  Built By Security Researchers For Security Researchers, This Tool Is Designed To Speed Up Response & Research Times By Giving You Quick Access To Popular Security Tools.  Directly Research Domains & IP Addresses On Cisco Talos Or Virus Total With A Right Click. Continue To Perform OSINT With Other Popular Tool Integrations, Each Update Adding More & More Functionality.  This Tool Is Designed For Research Purposes Only.
