@@ -10,6 +10,7 @@ chrome.runtime.onInstalled.addListener(function() {
         "parentId": "myContextMenuId",
         "id": "VirusTotal"
     });
+
     chrome.contextMenus.create({
         "title": 'Search On Talos',
         "contexts": ["selection"],
@@ -35,14 +36,23 @@ chrome.runtime.onInstalled.addListener(function() {
         "contexts": ["link"],
         "id": "Link"
     });
-
+    
+    // Talos
     chrome.contextMenus.create({
         "title": 'Search Link On Talos',
         "contexts": ["link"],
         "parentId":"Link",
         "id": "Talos-Link"
     });
+    //Talos Sanitize Link
+    chrome.contextMenus.create({
+        "title": 'Sanitize',
+        "contexts": ["link"],
+        "parentId":"Talos-Link",
+        "id": "T-Sanitize"
+    });
 
+    //Virus Total Link
     chrome.contextMenus.create({
         "title": 'Search Link On Virus Total',
         "contexts": ["link"],
@@ -50,12 +60,29 @@ chrome.runtime.onInstalled.addListener(function() {
         "id": "VirusT-Link"
     });
 
+    //Virus Total Sanitize Link
+    chrome.contextMenus.create({
+        "title": 'Sanitize',
+        "contexts": ["link"],
+        "parentId": "VirusT-Link",
+        "id": "VT-Sanitize"
+    });
+    // Censys Link
     chrome.contextMenus.create({
         "title": 'Search Link On Censys',
         "contexts": ["link"],
         "parentId":"Link",
         "id": "Censys-Link"
     });
+
+    // Censys Sanitize Link
+    chrome.contextMenus.create({
+        "title": 'Sanitize',
+        "contexts": ["link"],
+        "parentId":"Censys-Link",
+        "id": "C-Sanitize"
+    });
+
     
     //Search CVE
     chrome.contextMenus.create({
@@ -219,6 +246,18 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
             });
         }else{
             chrome.tabs.create({  
+            url: "https://www.virustotal.com/gui/domain/" + encodeURIComponent(info.linkUrl)
+            });
+        }
+    }
+    // Virus Total Sanitize Link
+    if(info.menuItemId == "VT-Sanitize"){
+        if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(info.selectionText)){
+            chrome.tabs.create({  
+                url: "https://www.virustotal.com/gui/ip-address/" + encodeURIComponent(info.linkUrl.replace(/^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/, "$1"))
+            });
+        }else{
+            chrome.tabs.create({  
             url: "https://www.virustotal.com/gui/domain/" + encodeURIComponent(info.linkUrl.replace(/^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/, "$1"))
             });
         }
@@ -233,6 +272,14 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
             url: "https://www.talosintelligence.com/reputation_center/lookup?search=" + encodeURIComponent(info.linkUrl)
         });
     }
+    // Talos Sanitize
+
+    if(info.menuItemId == "T-Sanitize"){
+        chrome.tabs.create({  
+            url: "https://www.talosintelligence.com/reputation_center/lookup?search=" + encodeURIComponent(info.linkUrl.replace(/^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/, "$1"))
+        });
+    }
+
     if(info.menuItemId == "Umbrella"){
         chrome.tabs.create({  
             url: "https://investigate.umbrella.com/ip-view/" + encodeURIComponent(info.selectionText)
@@ -334,6 +381,18 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
         if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(info.selectionText)){
             chrome.tabs.create({  
                 url: "https://search.censys.io/hosts/" + encodeURIComponent(info.linkUrl)
+            });
+        }else{
+            chrome.tabs.create({  
+            url: "https://search.censys.io/search?resource=hosts&sort=RELEVANCE&per_page=25&virtual_hosts=EXCLUDE&q=" + encodeURIComponent(info.linkUrl)
+            });
+        }
+    }
+
+    if(info.menuItemId == "C-Sanitize"){
+        if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(info.selectionText)){
+            chrome.tabs.create({  
+                url: "https://search.censys.io/hosts/" + encodeURIComponent(info.linkUrl.replace(/^(?:https?:\/\/)?(?:[^\/]+\.)?([^.\/]+\.[^.\/]+).*$/, "$1"))
             });
         }else{
             chrome.tabs.create({  
