@@ -198,9 +198,27 @@ chrome.runtime.onInstalled.addListener(function() {
         "parentId":"OSINT-IOT",
         "id": "Censys"
     });
+
+    /*
+    // Social Media OSINT
+    chrome.contextMenus.create({
+        "title": 'Social Media',
+        "contexts": ["selection"],
+        "parentId":"OSINT",
+        "id": "OSINT-SM"
+    });
+
+    chrome.contextMenus.create({
+        "title": 'LinkedIn',
+        "contexts": ["selection"],
+        "parentId":"OSINT-SM",
+        "id": "OSINT-LI"
+    });
+
+    */
 });
     
-chrome.contextMenus.onClicked.addListener(function(info, tab) {
+chrome.contextMenus.onClicked.addListener(async function(info, tab) {
     if(info.menuItemId == "VirusTotal"){
         if(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(info.selectionText)){
             chrome.tabs.create({  
@@ -343,4 +361,27 @@ chrome.contextMenus.onClicked.addListener(function(info, tab) {
     }
 
 
+    //Social Media OSINT
+
+
+    // LinkedIn OSINT
+    /*
+    let LinkedInToken = "" 
+    if(info.menuItemId == "OSINT-LI"){
+        const response =  await fetch("https://api.linkedin.com/v2/companySearch?q=" + encodeURIComponent(info.linkUrl), {
+            headers: {
+            Authorization: "Bearer {"+LinkedInToken+"}"
+                }
+        })
+        var data = await response.json();
+        var json = JSON.stringify(data),
+        blob = new Blob([json], {type: "octet/stream"}),
+        url = window.URL.createObjectURL(blob);
+        fileName = "linkedin.json";
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+    */
 })
