@@ -216,6 +216,13 @@ chrome.runtime.onInstalled.addListener(function() {
     });
 
     */
+
+    // Scrape Page
+    chrome.contextMenus.create({
+        "title": 'Scrape Page',
+        "contexts": ["page"],
+        "id": "scrapePage"
+    });
 });
     
 chrome.contextMenus.onClicked.addListener(async function(info, tab) {
@@ -384,4 +391,73 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab) {
         window.URL.revokeObjectURL(url);
     }
     */
+
+    // Active Tab Scraper
+    /*
+    Scrape Any Data Of Interest With Pre-Defined Regex Expressions That Look For Street Addresses, IP Addresses, Domain Names & More
+    Because There Isnt Really Anysort Of Intelligence Associated With This, You May Find Yorself Receiving Useless Information But This Will Continue To Be Improved Upon.
+
+    Permissions Needed: Scripting
+
+    Reason: Needed To Access The Entire DOM
+    */
+    if(info.menuItemId == "scrapePage"){
+        chrome.tabs.query({active: true, currentWindow: true},function(tabs){   
+            var currentTab = tabs[0];
+            function scrapePage(){
+                let page = document.documentElement.innerHTML;
+                let ip =  page.match(/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g);
+                let domains = page.match(/href="([^"]*)/g);
+                let usPhoneNumbers = page.match(/(?:^|\D)\(([2-9])(?:\d(?!\1)\d|(?!\1)\d\d)\)\s*[2-9]\d{2}-\d{4}/g)
+                // let ukPhoneNumbers = page.match(/^(((\+44\s?\d{4}|\(?0\d{4}\)?)\s?\d{3}\s?\d{3})|((\+44\s?\d{3}|\(?0\d{3}\)?)\s?\d{3}\s?\d{4})|((\+44\s?\d{2}|\(?0\d{2}\)?)\s?\d{4}\s?\d{4}))(\s?\#(\d{4}|\d{3}))?$/g)
+                // let frPhoneNumbers = page.match(/^(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/g)
+                // let dePhoneNumbers = page.match(/(\(?([\d \-\)\–\+\/\(]+){6,}\)?([ .\-–\/]?)([\d]+))/g)
+                // let cnPhoneNumbers = page.match(/^(?:(?:\d{3}-)?\d{8}|^(?:\d{4}-)?\d{7,8})(?:-\d+)?$/g)
+                // let inPhoneNumbers = page.match(/((\+*)((0[ -]*)*|((91 )*))((\d{12})+|(\d{10})+))|\d{5}([- ]*)\d{6}/g)
+                // let brPhoneNumbers = page.match(/\(([0-9]{2}|0{1}((x|[0-9]){2}[0-9]{2}))\)\s*[0-9]{3,4}[- ]*[0-9]{4}/g)
+                // let auPhoneNumbers = page.match(/(^1300\d{6}$)|(^1800|1900|1902\d{6}$)|(^0[2|3|7|8]{1}[0-9]{8}$)|(^13\d{4}$)|(^04\d{2,3}\d{6}$)/g)
+                // let nlPhoneNumbers = page.match(/(^\+[0-9]{2}|^\+[0-9]{2}\(0\)|^\(\+[0-9]{2}\)\(0\)|^00[0-9]{2}|^0)([0-9]{9}$|[0-9\-\s]{10}$)/g)
+                let scrap = [ip, domains, usPhoneNumbers]
+                console.log(scrap)
+                let resultsDiv = document.createElement("div");
+                resultsDiv.style.width = "100%"
+                resultsDiv.style.minHeight = "300px"
+                resultsDiv.style.backgroundColor = "white"
+                /*
+                
+                    Other National Numbers Code:
+
+                    <td>UK Phone Numbers</td><td>French Phone Numbers</td><td>German Phone Numbers</td><td>Chinese Phone Numbers</td><td>Indian Phone Numbers</td><td>Brazilian Phone Numbers</td><td>Australian Phone Numbers</td><td>Dutch Phone Numbers</td>
+                    <td>" + maxArray[3][index] + "</td><td>" + maxArray[4][index] + "</td><td>" + maxArray[5][index] + "</td><td>" + maxArray[6][index] + "</td><td>" + maxArray[7][index] + "</td><td>" + maxArray[8][index] + "</td><td>" + maxArray[9][index] + "</td><td>" + maxArray[10][index] + "</td>
+
+
+                */
+                document.querySelector('header').innerHTML += "<style>table {border-collapse: collapse;min-width: 50%;}th, td {text-align: left;padding: 8px;} tr {border-bottom: 1px solid #ddd;}tr:nth-child(even) {background-color: #D6EEEE;}</style>"
+                resultsDiv.innerHTML += "<table id='resTable' style='border-spacing: 30px; margin-left:auto; margin-right:auto;'><tr><td style='margin-left:10px; margin-right:10px;'>IP Addresses</td><td style='margin-left:10px; margin-right:10px;'>Domain Names</td><td style='margin-left:10px; margin-right:10px;'>US Phone Numbers</td></tr></table>"
+                let maxArray = 0;
+                document.body.insertAdjacentElement("afterbegin", resultsDiv);
+                for (let index = 0; index < scrap.length; index++) {
+                    if(scrap[index]?.length){
+                        if(scrap[index].length > maxArray){
+                            maxArray = scrap[index].length
+                        }else{
+                            continue
+                        }  
+                    }
+                }
+                console.log(maxArray)
+                for (let index = 0; index < maxArray; index++) {
+                    document.getElementById("resTable").innerHTML += "<tr><td>" + scrap[0]?.[index] + "</td><td>" + scrap[1]?.[index].replace('href="','') + "</td><td>" + scrap[2]?.[index] + "</td></tr>"
+                }
+                
+            }
+            chrome.scripting.executeScript(
+                {
+                  target: {tabId: currentTab.id},
+                  func: scrapePage,
+                });
+        });
+        
+        }
+
 })
