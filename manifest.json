@@ -9,5 +9,8 @@
     },
     "permissions":[
         "contextMenus", "activeTab", "scripting"
-    ]
+    ],
+    "icons": {
+        "48": "icon.png"
+    }
 }
