@@ -223,6 +223,18 @@ chrome.runtime.onInstalled.addListener(function() {
         "contexts": ["page"],
         "id": "scrapePage"
     });
+    chrome.contextMenus.create({
+        "title": 'Scan',
+        "contexts": ["page"],
+        "parentId":"scrapePage",
+        "id": "scrapePageScan"
+    });
+    chrome.contextMenus.create({
+        "title": 'Export CSV',
+        "contexts": ["page"],
+        "parentId":"scrapePage",
+        "id": "scrapePage-CSV"
+    });
 });
     
 chrome.contextMenus.onClicked.addListener(async function(info, tab) {
@@ -401,7 +413,7 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab) {
 
     Reason: Needed To Access The Entire DOM
     */
-    if(info.menuItemId == "scrapePage"){
+    if(info.menuItemId == "scrapePageScan"){
         chrome.tabs.query({active: true, currentWindow: true},function(tabs){   
             var currentTab = tabs[0];
             function scrapePage(){
@@ -449,8 +461,8 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab) {
                 for (let index = 0; index < maxArray; index++) {
                     document.getElementById("resTable").innerHTML += "<tr><td>" + scrap[0]?.[index] + "</td><td>" + scrap[1]?.[index].replace('href="','') + "</td><td>" + scrap[2]?.[index] + "</td></tr>"
                 }
-                
             }
+            
             chrome.scripting.executeScript(
                 {
                   target: {tabId: currentTab.id},
@@ -459,5 +471,47 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab) {
         });
         
         }
-
+        if(info.menuItemId == "scrapePage-CSV"){
+            chrome.tabs.query({active: true, currentWindow: true},function(tabs){   
+                var currentTab = tabs[0];
+                function exportCSV(){
+                    let page = document.documentElement.innerHTML;
+                    let ip =  page.match(/(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/g);
+                    let domains = page.match(/href="([^"]*)/g);
+                    let usPhoneNumbers = page.match(/(?:^|\D)\(([2-9])(?:\d(?!\1)\d|(?!\1)\d\d)\)\s*[2-9]\d{2}-\d{4}/g)
+                    let scrap = [ip, domains, usPhoneNumbers]
+                    let maxArray = 0;
+                    for (let index = 0; index < scrap.length; index++) {
+                        if(scrap[index]?.length){
+                            if(scrap[index].length > maxArray){
+                                maxArray = scrap[index].length
+                            }else{
+                                continue
+                            }  
+                        }
+                    }
+                    let csvArray = [["IP Addresses", "Domains", "US Phone Numbers"]];
+                    for (let index = 0; index < maxArray; index++) {
+                        let arr = [];
+                        arr.push(scrap[0]?.[index])
+                        arr.push(scrap[1]?.[index])
+                        arr.push(scrap[2]?.[index])
+                        csvArray.push(arr);
+                        console.log(index)
+                    }
+                    let csvContent = "data:text/csv;charset=utf-8," + csvArray.map(e => e.join(",")).join("\n");
+                    var encodedUri = encodeURI(csvContent);
+                    var link = document.createElement("a");
+                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("download", "my_data.csv");
+                    document.body.appendChild(link);
+                    link.click();
+                }
+                chrome.scripting.executeScript(
+                    {
+                      target: {tabId: currentTab.id},
+                      func: exportCSV,
+                    });
+            });
+        }
 })
