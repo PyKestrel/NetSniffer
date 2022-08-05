@@ -503,7 +503,7 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab) {
 
 
                 */
-                document.querySelector('header').innerHTML += "<style>table {border-collapse: collapse;min-width: 50%;}th, td {text-align: left;padding: 8px;} tr {border-bottom: 1px solid #ddd;}tr:nth-child(even) {background-color: #D6EEEE;}</style>"
+                document.querySelector('html').innerHTML += "<style>table {border-collapse: collapse;min-width: 50%;}th, td {text-align: left;padding: 8px;} tr {border-bottom: 1px solid #ddd;}tr:nth-child(even) {background-color: #D6EEEE;}</style>"
                 resultsDiv.innerHTML += "<table id='resTable' style='border-spacing: 30px; margin-left:auto; margin-right:auto;'><tr><td style='margin-left:10px; margin-right:10px;'>IP Addresses</td><td style='margin-left:10px; margin-right:10px;'>Domain Names</td><td style='margin-left:10px; margin-right:10px;'>US Phone Numbers</td></tr></table>"
                 let maxArray = 0;
                 document.body.insertAdjacentElement("afterbegin", resultsDiv);
