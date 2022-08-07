@@ -552,16 +552,24 @@ chrome.contextMenus.onClicked.addListener(async function(info, tab) {
                     let csvArray = [["IP Addresses", "Domains", "US Phone Numbers"]];
                     for (let index = 0; index < maxArray; index++) {
                         let arr = [];
-                        arr.push(scrap[0]?.[index])
-                        arr.push(scrap[1]?.[index])
-                        arr.push(scrap[2]?.[index])
+                        arr.push(scrap[0]?.[index] ?? " ")
+                        arr.push(scrap[1]?.[index] ?? " ")
+                        arr.push(scrap[2]?.[index] ?? " ")
                         csvArray.push(arr);
-                        console.log(index)
+                        console.log(arr)
                     }
-                    let csvContent = "data:text/csv;charset=utf-8," + csvArray.map(e => e.join(",")).join("\n");
-                    var encodedUri = encodeURI(csvContent);
+                    console.log(csvArray)
+                    var csv = "";
+                    for (let row of csvArray) {
+                        for (let col of row) { csv += col + ","; }
+                        csv += "\r\n";
+                    }
+                    var myBlob = new Blob([csv], {type: "text/csv"});
+                    //let csvContent = "data:text/csv;charset=utf-8," + csvArray.map(e => e.join(",")).join("\n");
+                    //var encodedUri = encodeURI(csvContent);
+                    var url = window.URL.createObjectURL(myBlob);
                     var link = document.createElement("a");
-                    link.setAttribute("href", encodedUri);
+                    link.setAttribute("href", url);
                     link.setAttribute("download", "my_data.csv");
                     document.body.appendChild(link);
                     link.click();
