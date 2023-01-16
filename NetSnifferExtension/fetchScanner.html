@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self';">
+    <title>Fetch Port Scanner</title>
+    <style>
+        html,body{
+            margin: 0%;
+            padding: 0%;
+            min-height: 500px;
+            min-width: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .form{
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-direction: column;
+        }
+        #customPorts{
+            display: none;
+        }
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="form">
+        <label for="hostname">Hostname (DNS Name)</label>
+        <input type="text" name="hostname" id="hostname" placeholder="scanme.nmap.org">
+        <label for="defaultPortsSelector">Scan Common Ports</label>
+        <input type="checkbox" name="defaultPortsSelector" id="defaultPortsSelector">
+        <label for="customPortsSelector">Scan Custom Ports</label>
+        <input type="checkbox" name="customPortsSelector" id="customPortsSelector">
+        <input type="text" name="customPorts" id="customPorts" placeholder="22,23,60-90">
+        <input type="button" value="Scan" id="scanButton">
+    </div>
+        
+    <table id="results">
+    </table>
+</body>
+<script src="fetchScanApp.js" defer>
+</script>
+</html>

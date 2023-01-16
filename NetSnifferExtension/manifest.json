@@ -1,0 +1,16 @@
+{
+    "name": "NetSniffer: Context Menu OSINT",
+    "version": "1.4.2",
+    "description": "Leverage OSINT APIs Right From Your Context Menu",
+    "manifest_version": 3,
+    "author": "Ariel Torres, Github: PyKestrel",
+    "background":{
+        "service_worker":"app.js"
+    },
+    "permissions":[
+        "contextMenus", "activeTab", "scripting"
+    ],
+    "icons": {
+        "48": "icon.png"
+    }
+}
